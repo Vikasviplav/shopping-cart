@@ -1,6 +1,6 @@
 # Shopping cart website created using React.js
 
-* ## [Demo](https://shopcart.hramdas.in/)
+* ## [Demo](https://ecommerce-shopping-cart-vikasviplav.netlify.app/)
 
 
 ## Getting Started
