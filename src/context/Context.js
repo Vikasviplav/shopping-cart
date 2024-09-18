@@ -1,22 +1,36 @@
-import React, { createContext, useReducer, useContext } from "react";
-import faker from "@faker-js/faker";
-import { cartReducer, productReducer } from "./Reducer";``
+import React, { createContext, useReducer, useContext, useState, useEffect } from "react";
+import { cartReducer, productReducer } from "./Reducer";
+import axios from "axios"; // To make API requests
 
 const Cart = createContext();
-faker.seed(99);
 
 export const Context = ({ children }) => {
-  const products = [...Array(20)].map(() => ({
-    id: faker.datatype.uuid(),
-    name: faker.commerce.productName(),
-    price: faker.commerce.price(),
-    image: faker.image.avatar(400, 400),
-    inStock: faker.random.arrayElement([0, 1, 2, 3, 5, 6, 7, 10]),
-    ratings: faker.random.arrayElement([1, 2, 3, 4, 5]),
-    fastDelivery: faker.datatype.boolean(),
-  }));
+  const [products, setProducts] = useState([]);
 
-  //Hook useReducer - alternative to useState,
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get("https://fakestoreapi.com/products"); 
+        const formattedProducts = data.map((product) => ({
+          id: product.id,
+          name: product.title,
+          price: product.price*10,
+          image: product.image, // Assuming image comes in the API response
+          inStock: Math.floor(Math.random() * 10), // Random stock count
+          ratings: Math.floor(Math.random() * 5) + 1, // Random ratings 1-5
+          fastDelivery: Math.random() > 0.5, // Random fast delivery boolean
+          size: null, // If the API doesn't provide size
+          category: product.category,
+        }));
+        setProducts(formattedProducts); 
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+      }
+    };
+
+    fetchProducts();
+  }, []); 
+
   const [state, dispatch] = useReducer(cartReducer, {
     products: products,
     cart: [],
@@ -30,7 +44,7 @@ export const Context = ({ children }) => {
   });
 
   return (
-    <Cart.Provider value={{ state, dispatch, productState, productDispatch }}>
+    <Cart.Provider value={{ state: { ...state, products }, dispatch, productState, productDispatch }}>
       {children}
     </Cart.Provider>
   );
