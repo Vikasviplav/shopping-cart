@@ -38,7 +38,7 @@ export const Header = () => {
                                 <img src={prod.image} className="cartItemImg" alt={prod.name} />
                                 <div className='cartItemDetail'>
                                     <span>{prod.name}</span>
-                                    <span>₹ {prod.price.split('.')[0]}</span>
+                                    <span>₹ {prod.price}</span>
                                 </div>
                                 <AiFillDelete fontSize="20px" style={{cursor :"pointer" }} onClick={() => dispatch({
                                     type:"REMOVE_FROM_CART",
